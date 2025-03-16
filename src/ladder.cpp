@@ -8,27 +8,40 @@
 
 using namespace std;
 
-bool is_adjacent(const string& word1, const string& word2) {
-    int len1 = word1.length(), len2 = word2.length();
-    if (abs(len1 - len2) > 1) 
-      return false;
+void load_words(set<string> &word_list, const string &file_name) {
+    ifstream file(file_name);
+    if (!file) {
+        cerr << "Error opening " << file_name << endl;
+        exit(1);
+    }
+    string word;
+    while (file >> word) {
+        word_list.insert(word);
+    }
+    file.close();
+}
+
+bool edit_distance_within(const string& str1, const string& str2, int d) {
+    int len1 = str1.length(), len2 = str2.length();
+    if (abs(len1 - len2) > d) return false;
+    
     int diff = 0, i = 0, j = 0;
     while (i < len1 && j < len2) {
-        if (word1[i] != word2[j]) {
+        if (str1[i] != str2[j]) {
             diff++;
-            if (diff > 1) return false;
+            if (diff > d) return false;
             if (len1 > len2) i++;
             else if (len2 > len1) j++;
-            else { 
-                i++; 
-                j++; 
-            }
-        } 
-        else
-            i++; 
-            j++;
+            else { i++; j++; }
+        } else {
+            i++; j++;
+        }
     }
-    return true;
+    return diff + abs(len1 - i) + abs(len2 - j) <= d;
+}
+
+bool is_adjacent(const string& word1, const string& word2) {
+    return edit_distance_within(word1, word2, 1);
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
