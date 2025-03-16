@@ -19,10 +19,14 @@ bool is_adjacent(const string& word1, const string& word2) {
             if (diff > 1) return false;
             if (len1 > len2) i++;
             else if (len2 > len1) j++;
-            else { i++; j++; }
+            else { 
+                i++; 
+                j++; 
+            }
         } 
         else
-            i++; j++;
+            i++; 
+            j++;
     }
     return true;
 }
